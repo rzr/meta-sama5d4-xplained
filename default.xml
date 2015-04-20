@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote fetch="git://git.yoctoproject.org/" name="yocto"/>
+  <remote fetch="git://github.com/openembedded" name="oe"/>
+  <remote fetch="git://github.com/meta-qt5" name="qt"/>
+  <remote fetch="git://github.com/linux4sam" name="atmel"/>
+  <project name="poky" path="sources/poky" remote="yocto" revision="master"/>
+  <project name="meta-openembedded" path="sources/meta-openembedded" remote="oe" revision="dizzy"/>
+  <project name="meta-qt5" path="sources/meta-qt5" remote="qt" revision="dizzy"/>
+  <project name="meta-atmel" path="sources/meta-atmel" remote="atmel" revision="master"/>
+</manifest>
