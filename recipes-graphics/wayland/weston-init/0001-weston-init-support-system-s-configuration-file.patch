@@ -1,0 +1,43 @@
+From 277207ca9746aff05513f1430a7d4342260a7897 Mon Sep 17 00:00:00 2001
+From: Philippe Coval <philippe.coval@open.eurogiciel.org>
+Date: Wed, 29 Apr 2015 09:40:50 +0200
+Subject: [PATCH] weston-init: support system's configuration file
+
+Look for OPTARGS variable in /etc/default/weston
+and set it as weston's service default options.
+
+This can be used to force system's supported backend.
+
+Change-Id: I0562c9326df5b46226093199873ef58d77aeae75
+Signed-off-by: Philippe Coval <philippe.coval@open.eurogiciel.org>
+---
+ meta/recipes-graphics/wayland/weston-init/init | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/meta/recipes-graphics/wayland/weston-init/init b/meta/recipes-graphics/wayland/weston-init/init
+index 8e662e0..2e938f4 100644
+--- a/meta/recipes-graphics/wayland/weston-init/init
++++ b/meta/recipes-graphics/wayland/weston-init/init
+@@ -8,6 +8,10 @@
+ # Default-Stop:      0 1 6
+ ### END INIT INFO
+ 
++if test -e /etc/default/weston ; then
++        . /etc/default/weston
++fi
++
+ killproc() {
+         pid=`/bin/pidof $1`
+         [ "$pid" != "" ] && kill $pid
+@@ -34,7 +38,7 @@ case "$1" in
+                 chmod 0700 $XDG_RUNTIME_DIR
+         fi
+ 
+-        openvt -s weston
++        openvt -s weston -- $OPTARGS
+   ;;
+ 
+   stop)
+-- 
+1.9.1
+
