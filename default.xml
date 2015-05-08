@@ -4,8 +4,10 @@
   <remote fetch="git://github.com/openembedded" name="oe"/>
   <remote fetch="git://github.com/meta-qt5" name="qt"/>
   <remote fetch="git://github.com/linux4sam" name="atmel"/>
-  <project name="poky" path="sources/poky" remote="yocto" revision="master"/>
+  <remote fetch="file:///usr/local/src/" name="sama5d4-xplained"/>
+  <project name="poky" path="sources/poky" remote="yocto" revision="dizzy"/>
   <project name="meta-openembedded" path="sources/meta-openembedded" remote="oe" revision="dizzy"/>
   <project name="meta-qt5" path="sources/meta-qt5" remote="qt" revision="dizzy"/>
-  <project name="meta-atmel" path="sources/meta-atmel" remote="atmel" revision="master"/>
+  <project name="meta-atmel" path="sources/meta-atmel" remote="atmel" revision="dizzy"/>
+  <project name="meta-sama5d4-xplained" path="sources/meta-sama5d4-xplained" remote="sama5d4-xplained" revision="dizzy"/>
 </manifest>
