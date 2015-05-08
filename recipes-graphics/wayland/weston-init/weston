@@ -1,0 +1,2 @@
+# Check weston's manual page to override default options (backend log etc)
+OPTARGS="--use-pixman"
