@@ -21,6 +21,7 @@ board_family?=sama5d4
 board_variant?=xplained
 MACHINE?=${board_family}-${board_variant}
 machine?=${board_serie}-${board_variant}
+package=meta-${machine}
 target_host?=${machine}
 board_alias?=${board_family}x-ek
 board_serie?=${board_family}
@@ -50,6 +51,19 @@ demo_url_dir?=$(shell echo "${demo_url}" | sed -e 's|:||g')
 nandflashtcl_file?=${image_dir}/demo_script_linux_nandflash.tcl
 init_build_env?=${TOPDIR}/sources/poky/oe-init-build-env
 image_bb?=recipes-core/images/${image}.bb
+
+user?=$(shell echo ${USER})
+version?=0.0.$(shell date -u +%Y%m%d)${user}
+
+dist_files?=\
+ COPYING.MIT \
+ README.md \
+ Makefile default.xml \
+ conf \
+ recipes-core \
+ recipes-graphics \
+ recipes-qt \
+ sources/poky/build-atmel/tmp/deploy/images/${MACHINE}
 
 
 define BBLAYERS
@@ -237,3 +251,9 @@ rule/dizzy:
 	make src sync demo repo_branch=master branch=dizzy
 
 demo: help rule/all install
+
+dist: ${package}-${version}.tar.xz
+
+${package}-${version}.tar.xz: ${dist_files}
+	tar cfJv "$@" --transform "s|^|${package}-${version}/|" $^
+	tar tfv "$@"
