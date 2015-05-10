@@ -12,6 +12,9 @@ TOPDIR?=${CURDIR}
 
 # TODO overide if installed elsewhere
 sam_ba?=$(shell which sam-ba || echo /usr/local/opt/sam-ba_cdc_linux/sam-ba)
+sam_ba_url?=http://www.atmel.com/dyn/resources/prod_documents/sam-ba_2.15.zip
+sam_ba_file?=$(shell basename -- "${sam_ba_url}")
+sam_ba_sum?=ad37112f31725bd405c4fcaa9c6a837408cecd55
 console_dev?=/dev/ttyACM0
 flash_dev?=/dev/ttyACM1
 
@@ -257,3 +260,17 @@ dist: ${package}-${version}.tar.xz
 ${package}-${version}.tar.xz: ${dist_files}
 	tar cfJv "$@" --transform "s|^|${package}-${version}/|" $^
 	tar tfv "$@"
+
+
+setup: /usr/local/opt/sam-ba_cdc_linux
+
+/usr/local/opt/sam-ba_cdc_linux: sam-ba_cdc_linux
+	ls "$@" && exit 1 || echo "installing"
+	sudo mkdir -p ${@D}
+	sudo mv "$<" "$@"
+
+sam-ba_cdc_linux: Makefile
+	wget -c "${sam_ba_url}"
+	@echo "Please compare to ${sam_ba_sum}"
+	sha1sum "${sam_ba_file}" | grep "${sam_ba_sum}"
+	unzip "${sam_ba_file}"
