@@ -99,7 +99,7 @@ export tcl
 
 help: Makefile
 	@echo "Usage: "
-	@echo "# make rule/all"
+	@echo "# make all"
 	@echo "USER=${USER}"
 	@echo "BBLAYERS=${BBLAYERS}"
 	@echo "image_dir=${image_dir}"
@@ -253,7 +253,7 @@ deploy:rootfs
 rule/dizzy:
 	make src sync demo repo_branch=master branch=dizzy
 
-demo: help rule/all install
+demo: help all install
 
 dist: ${package}-${version}.tar.xz
 
