@@ -5,7 +5,7 @@
 SHELL=/bin/bash
 source?=.
 
-branch?=dizzy
+branch?=master
 repo_branch?=${branch}
 image?=atmel-xplained-lcd-demo-image
 
@@ -260,6 +260,9 @@ deploy:rootfs
 
 rule/dizzy:
 	make src sync demo repo_branch=master branch=dizzy
+
+rule/master:
+	make src sync demo repo_branch=master branch=master
 
 demo: help all install
 
