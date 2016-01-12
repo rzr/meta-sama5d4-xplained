@@ -2,7 +2,8 @@
 # Author: Philippe Coval <philippe.coval@open.eurogiciel.org>
 # ex: set tabstop=4 noexpandtab:
 
-SHELL?=/bin/bash
+SHELL=/bin/bash
+source?=.
 
 branch?=dizzy
 repo_branch?=${branch}
@@ -11,7 +12,10 @@ image?=atmel-xplained-lcd-demo-image
 TOPDIR?=${CURDIR}
 
 # TODO overide if installed elsewhere
-sam_ba?=$(shell which sam-ba || echo /usr/local/opt/sam-ba_cdc_linux/sam-ba)
+sam_ba_dir?=${CURDIR}/sam-ba_cdc_linux
+sam_ba?=${sam_ba_dir}/sam-ba
+
+
 sam_ba_url?=http://www.atmel.com/dyn/resources/prod_documents/sam-ba_2.15.zip
 sam_ba_file?=$(shell basename -- "${sam_ba_url}")
 sam_ba_sum?=ad37112f31725bd405c4fcaa9c6a837408cecd55
@@ -108,6 +112,13 @@ help: Makefile
 	@echo "# existing rules"
 	@grep -o -e '^.*:' $<
 
+rule/bsp/help:
+	@echo "# plug EDBG-USB 1st and then A5-USB-A"
+	@echo "# close BOOT_DTS before flashing"
+	@echo "# echo console_dev=${console_dev}"
+	@echo "# echo flash_dev=${flash_dev}"
+
+
 all: rule/configure rule/env/build
 
 src: .repo sync checkout
@@ -150,7 +161,7 @@ init_build_env: ${init_build_env}
 rule/help: rule/env/help
 
 rule/env/%:${init_build_env}
-	cd ${<D} && source ${<} build-${bsp} \
+	cd ${<D} && ${source} ${<} build-${bsp} \
 	&& make -C ${TOPDIR} ${@F} ARGS="${ARGS}"
 
 bitbake: ${TOPDIR}/sources/poky/build-${bsp}
@@ -215,10 +226,7 @@ dtb: ${dtb_file}
 ${dtb_file}: ${image_dir}/${dtFile}
 	ln -fs $< $@
 
-${console_dev} ${flash_dev}:
-	@echo "# plug EDBG-USB 1st and then A5-USB-A"
-	@echo "# echo console_dev=${console_dev}"
-	@echo "# echo flash_dev=${flash_dev}"
+${console_dev} ${flash_dev}: rule/bsp/help
 
 install: ${tcl_file} dtb ${flash_dev}
 	ls -l ${<D}/${bootstrapFile}
@@ -262,15 +270,19 @@ ${package}-${version}.tar.xz: ${dist_files}
 	tar tfv "$@"
 
 
-setup: /usr/local/opt/sam-ba_cdc_linux
+setup: ${sam_ba}
 
-/usr/local/opt/sam-ba_cdc_linux: sam-ba_cdc_linux
-	ls "$@" && exit 1 || echo "installing"
-	sudo mkdir -p ${@D}
-	sudo mv "$<" "$@"
+${sam_ba}: ${sam_ba_dir}
+	file "$@"
+	touch "$@"
+#	sudo mkdir -p ${@D}
 
-sam-ba_cdc_linux: Makefile
+${sam_ba_dir}: Makefile
 	wget -c "${sam_ba_url}"
 	@echo "Please compare to ${sam_ba_sum}"
 	sha1sum "${sam_ba_file}" | grep "${sam_ba_sum}"
 	unzip "${sam_ba_file}"
+
+rule/setup/distro/debian:
+	sudo apt-get install \
+ wget make file libxft2:i386
